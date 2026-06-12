@@ -1,6 +1,6 @@
 {
-  "name": "codex-commit-message-generator-vscode",
-  "displayName": "Codex Commit Message Generator",
+  "name": "generate-commit-by-codex",
+  "displayName": "Generate Commit by Codex",
   "description": "Generate a commit message from Git changes with Codex and place it in the VS Code Source Control input.",
   "version": "0.1.0",
   "publisher": "zoldy",
@@ -34,24 +34,24 @@
     "commands": [
       {
         "command": "codexCommit.generateCommitMessage",
-        "title": "Codex Commit: Generate Commit Message",
-        "category": "Codex Commit",
+        "title": "Generate Commit by Codex: Generate Commit Message",
+        "category": "Generate Commit by Codex",
         "icon": "$(sparkle)"
       },
       {
         "command": "codexCommit.signIn",
-        "title": "Codex Commit: Sign In to Codex",
-        "category": "Codex Commit"
+        "title": "Generate Commit by Codex: Sign In to Codex",
+        "category": "Generate Commit by Codex"
       },
       {
         "command": "codexCommit.signOut",
-        "title": "Codex Commit: Sign Out of Codex",
-        "category": "Codex Commit"
+        "title": "Generate Commit by Codex: Sign Out of Codex",
+        "category": "Generate Commit by Codex"
       },
       {
         "command": "codexCommit.reauthenticate",
-        "title": "Codex Commit: Reauthenticate Codex",
-        "category": "Codex Commit"
+        "title": "Generate Commit by Codex: Reauthenticate Codex",
+        "category": "Generate Commit by Codex"
       }
     ],
     "menus": {
@@ -77,7 +77,7 @@
       ]
     },
     "configuration": {
-      "title": "Codex Commit Message Generator",
+      "title": "Generate Commit by Codex",
       "properties": {
         "codexCommit.customInstructions": {
           "type": "string",
@@ -104,15 +104,19 @@
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "test": "vitest run",
-    "verify": "npm run compile && npm test",
+    "test:unit": "vitest run",
+    "test:extension": "node ./test/run-extension-host.js",
+    "verify": "npm run compile && npm run test:unit && npm run test:extension",
     "vscode:prepublish": "npm run compile",
-    "package:vsix": "node -e \"require('fs').mkdirSync('out',{recursive:true})\" && vsce package --allow-missing-repository --out out/codex-commit-message-generator-vscode-0.1.0.vsix",
-    "install:vsix": "npm run package:vsix && code --install-extension out/codex-commit-message-generator-vscode-0.1.0.vsix --force",
-    "publish:dry-run": "node -e \"require('fs').mkdirSync('out',{recursive:true})\" && vsce package --allow-missing-repository --out out/codex-commit-message-generator-vscode-0.1.0.vsix"
+    "package:vsix": "node -e \"require('fs').mkdirSync('out',{recursive:true})\" && vsce package --allow-missing-repository --out out/generate-commit-by-codex-0.1.0.vsix",
+    "install:vsix": "npm run package:vsix && code --install-extension out/generate-commit-by-codex-0.1.0.vsix --force",
+    "publish:dry-run": "node -e \"require('fs').mkdirSync('out',{recursive:true})\" && vsce package --allow-missing-repository --out out/generate-commit-by-codex-0.1.0.vsix",
+    "publish:marketplace": "vsce publish --allow-missing-repository --packagePath out/generate-commit-by-codex-0.1.0.vsix --skip-duplicate"
   },
   "devDependencies": {
     "@types/node": "^20.14.10",
     "@types/vscode": "^1.90.0",
+    "@vscode/test-electron": "^3.0.0",
     "@vscode/vsce": "^3.9.2",
     "rimraf": "^5.0.7",
     "typescript": "^5.5.3",

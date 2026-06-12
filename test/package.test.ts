@@ -25,6 +25,11 @@ describe('package contributions', () => {
     expect(commands).toContain(COMMANDS.reauthenticate);
   });
 
+  it('uses the requested extension display name and Marketplace package name', () => {
+    expect((packageJson as { name: string; displayName: string }).name).toBe('generate-commit-by-codex');
+    expect((packageJson as { name: string; displayName: string }).displayName).toBe('Generate Commit by Codex');
+  });
+
   it('activates on all required commands', () => {
     for (const command of Object.values(COMMANDS)) {
       expect(packageJson.activationEvents).toContain(`onCommand:${command}`);

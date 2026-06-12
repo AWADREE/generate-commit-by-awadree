@@ -32,7 +32,7 @@ export async function checkCodexAuthenticated(run: RunProcess, codexCommand: str
   const result = await run(codexCommand, ['login', 'status'], { timeoutMs: 15000 });
   if (result.code !== 0) {
     const detail = (result.stderr || result.stdout).trim();
-    throw new Error(detail || 'Codex is not authenticated. Run "Codex Commit: Sign In to Codex".');
+    throw new Error(detail || 'Codex is not authenticated. Run "Generate Commit by Codex: Sign In to Codex".');
   }
 }
 

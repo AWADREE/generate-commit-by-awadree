@@ -1,4 +1,4 @@
-# Codex Commit Message Generator
+# Generate Commit by Codex
 
 A focused VS Code extension that generates one commit message from the current Git changes using the local Codex CLI, then writes the result into the VS Code Source Control commit input.
 
@@ -6,7 +6,7 @@ It never commits automatically.
 
 ## What It Does
 
-- Adds `Codex Commit: Generate Commit Message` to the Command Palette.
+- Adds `Generate Commit by Codex: Generate Commit Message` to the Command Palette.
 - Adds a Source Control title action using stable public VS Code menu APIs.
 - Detects the active Git repository from the active editor or workspace.
 - Prefers staged changes from:
@@ -48,6 +48,12 @@ npm run compile
 
 Then open the project in VS Code and press `F5` to launch an Extension Host.
 
+Run the automated checks, including an Extension Host smoke test:
+
+```sh
+npm run verify
+```
+
 ### Install Locally In VS Code
 
 Build a VSIX package and install it into your normal VS Code profile:
@@ -55,7 +61,7 @@ Build a VSIX package and install it into your normal VS Code profile:
 ```sh
 npm install
 npm run package:vsix
-code --install-extension out/codex-commit-message-generator-vscode-0.1.0.vsix --force
+code --install-extension out/generate-commit-by-codex-0.1.0.vsix --force
 ```
 
 Or run the combined helper:
@@ -71,13 +77,13 @@ Restart VS Code or run `Developer: Reload Window` after installing.
 If this extension is published to the VS Code Marketplace, install it from VS Code by searching for:
 
 ```text
-Codex Commit Message Generator
+Generate Commit by Codex
 ```
 
 You can also install by extension ID after publication:
 
 ```sh
-code --install-extension zoldy.codex-commit-message-generator-vscode
+code --install-extension zoldy.generate-commit-by-codex
 ```
 
 If you publish under a different Marketplace publisher, use that publisher ID instead of `zoldy`.
@@ -89,13 +95,13 @@ In VS Code:
 1. Open a folder that contains a Git repository.
 2. Stage files if you want the message generated from staged changes.
 3. Leave everything unstaged if you want the unstaged fallback.
-4. Run `Codex Commit: Generate Commit Message`.
+4. Run `Generate Commit by Codex: Generate Commit Message`.
 5. Review the generated message in the Source Control commit input.
 6. Commit manually when you are satisfied.
 
 ## Codex Sign-In
 
-Run `Codex Commit: Sign In to Codex` from the Command Palette. The extension opens a VS Code terminal and runs:
+Run `Generate Commit by Codex: Sign In to Codex` from the Command Palette. The extension opens a VS Code terminal and runs:
 
 ```sh
 codex login
@@ -107,7 +113,7 @@ If the official Codex VS Code extension appears to be installed, this extension 
 
 ## Sign Out And Reauthenticate
 
-`Codex Commit: Sign Out of Codex` warns before running:
+`Generate Commit by Codex: Sign Out of Codex` warns before running:
 
 ```sh
 codex logout
@@ -115,7 +121,7 @@ codex logout
 
 `codex logout` removes shared local Codex credentials used by the Codex CLI and related Codex IDE integrations.
 
-`Codex Commit: Reauthenticate Codex` warns first, then runs logout followed by login in a terminal.
+`Generate Commit by Codex: Reauthenticate Codex` warns first, then runs logout followed by login in a terminal.
 
 ## Settings
 
@@ -184,7 +190,7 @@ npm run package:vsix
 The generated file is:
 
 ```text
-out/codex-commit-message-generator-vscode-0.1.0.vsix
+out/generate-commit-by-codex-0.1.0.vsix
 ```
 
 Run the same package build as a dry run before publishing:
@@ -199,11 +205,23 @@ Marketplace publishing checklist:
 2. Add a real `repository` URL in `package.json` when the project has a public remote.
 3. Run `npm run verify`.
 4. Run `npm run package:vsix`.
-5. Install the VSIX locally with `code --install-extension out/codex-commit-message-generator-vscode-0.1.0.vsix --force`.
+5. Install the VSIX locally with `code --install-extension out/generate-commit-by-codex-0.1.0.vsix --force`.
 6. Confirm the command palette and Source Control action work in an Extension Host or normal VS Code window.
-7. Upload the same VSIX with `vsce publish --packagePath out/codex-commit-message-generator-vscode-0.1.0.vsix` when you are ready.
+7. Configure Marketplace publishing credentials:
+
+   ```sh
+   $env:VSCE_PAT = "<your-marketplace-personal-access-token>"
+   ```
+
+8. Upload the same VSIX:
+
+   ```sh
+   npm run publish:marketplace
+   ```
 
 The package uses only stable public VS Code APIs and includes the required `README.md`, `LICENSE`, `package.json`, compiled `dist` entrypoint, and Marketplace metadata needed for a normal VSIX install.
+
+The Marketplace upload requires a publisher account and a Personal Access Token authorized for that publisher. Without that credential, `vsce publish` can package and validate the extension but cannot upload it.
 
 ## Manual Extension Host Checklist
 
@@ -212,12 +230,12 @@ Run this after `npm install` and `npm run compile`.
 1. Press `F5` in VS Code to open an Extension Host.
 2. In the Extension Host, open a Git repository.
 3. Confirm the Command Palette lists:
-   - `Codex Commit: Generate Commit Message`
-   - `Codex Commit: Sign In to Codex`
-   - `Codex Commit: Sign Out of Codex`
-   - `Codex Commit: Reauthenticate Codex`
+   - `Generate Commit by Codex: Generate Commit Message`
+   - `Generate Commit by Codex: Sign In to Codex`
+   - `Generate Commit by Codex: Sign Out of Codex`
+   - `Generate Commit by Codex: Reauthenticate Codex`
 4. Confirm the Source Control view title shows the Codex generate action.
-5. Run `Codex Commit: Sign In to Codex` and complete browser login if needed.
+5. Run `Generate Commit by Codex: Sign In to Codex` and complete browser login if needed.
 6. Create an unstaged change and run generate. Confirm the Source Control input is filled.
 7. Stage a different change and run generate. Confirm staged changes are preferred.
 8. Remove all changes and run generate. Confirm a warning appears and the input is not changed.
@@ -233,7 +251,7 @@ Install Codex CLI or set `codexCommit.codexCommand` to the executable available 
 
 `Codex is not authenticated` or `Not logged in`
 
-Run `Codex Commit: Sign In to Codex`, complete browser login, then retry generation.
+Run `Generate Commit by Codex: Sign In to Codex`, complete browser login, then retry generation.
 
 `No Git repository found`
 
@@ -250,3 +268,4 @@ Check the notification detail. Common causes are expired Codex login, network is
 Generated message looks too broad
 
 The diff may have been truncated. Review the message before committing, increase `codexCommit.maxDiffChars`, or stage a narrower set of changes.
+
