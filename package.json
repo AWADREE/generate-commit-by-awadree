@@ -3,9 +3,8 @@
   "displayName": "Codex Commit Message Generator",
   "description": "Generate a commit message from Git changes with Codex and place it in the VS Code Source Control input.",
   "version": "0.1.0",
-  "publisher": "local",
+  "publisher": "zoldy",
   "license": "MIT",
-  "private": true,
   "engines": {
     "vscode": "^1.90.0"
   },
@@ -13,6 +12,17 @@
     "Source Control",
     "Other"
   ],
+  "keywords": [
+    "codex",
+    "git",
+    "commit",
+    "commit message",
+    "source control"
+  ],
+  "galleryBanner": {
+    "color": "#111827",
+    "theme": "dark"
+  },
   "activationEvents": [
     "onCommand:codexCommit.generateCommitMessage",
     "onCommand:codexCommit.signIn",
@@ -94,11 +104,16 @@
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "test": "vitest run",
-    "verify": "npm run compile && npm test"
+    "verify": "npm run compile && npm test",
+    "vscode:prepublish": "npm run compile",
+    "package:vsix": "node -e \"require('fs').mkdirSync('out',{recursive:true})\" && vsce package --allow-missing-repository --out out/codex-commit-message-generator-vscode-0.1.0.vsix",
+    "install:vsix": "npm run package:vsix && code --install-extension out/codex-commit-message-generator-vscode-0.1.0.vsix --force",
+    "publish:dry-run": "node -e \"require('fs').mkdirSync('out',{recursive:true})\" && vsce package --allow-missing-repository --out out/codex-commit-message-generator-vscode-0.1.0.vsix"
   },
   "devDependencies": {
     "@types/node": "^20.14.10",
     "@types/vscode": "^1.90.0",
+    "@vscode/vsce": "^3.9.2",
     "rimraf": "^5.0.7",
     "typescript": "^5.5.3",
     "vitest": "^3.2.6"

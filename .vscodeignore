@@ -1,9 +1,13 @@
 .git/**
 .vscode/**
+.gitignore
+.vscodeignore
 src/**
 test/**
 *.map
+**/*.map
 tsconfig.json
 vitest.config.*
+package-lock.json
 node_modules/.cache/**
 npm-debug.log*

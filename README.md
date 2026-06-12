@@ -37,7 +37,9 @@ This extension uses Codex through the supported local Codex CLI. It does not cal
 
 ## Install And Use
 
-From this repo:
+### Install From This Repo For Development
+
+From a clean clone:
 
 ```sh
 npm install
@@ -46,7 +48,43 @@ npm run compile
 
 Then open the project in VS Code and press `F5` to launch an Extension Host.
 
-In the Extension Host:
+### Install Locally In VS Code
+
+Build a VSIX package and install it into your normal VS Code profile:
+
+```sh
+npm install
+npm run package:vsix
+code --install-extension out/codex-commit-message-generator-vscode-0.1.0.vsix --force
+```
+
+Or run the combined helper:
+
+```sh
+npm run install:vsix
+```
+
+Restart VS Code or run `Developer: Reload Window` after installing.
+
+### Install From The VS Code Marketplace
+
+If this extension is published to the VS Code Marketplace, install it from VS Code by searching for:
+
+```text
+Codex Commit Message Generator
+```
+
+You can also install by extension ID after publication:
+
+```sh
+code --install-extension zoldy.codex-commit-message-generator-vscode
+```
+
+If you publish under a different Marketplace publisher, use that publisher ID instead of `zoldy`.
+
+### Use The Extension
+
+In VS Code:
 
 1. Open a folder that contains a Git repository.
 2. Stage files if you want the message generated from staged changes.
@@ -134,6 +172,38 @@ Useful files:
 - `src/prompt.ts`: commit prompt construction and output cleanup.
 - `src/diff.ts`: safe diff truncation.
 - `test/*.test.ts`: unit tests for behavior that can be verified outside Extension Host.
+
+## Packaging And Marketplace Readiness
+
+Package a local VSIX:
+
+```sh
+npm run package:vsix
+```
+
+The generated file is:
+
+```text
+out/codex-commit-message-generator-vscode-0.1.0.vsix
+```
+
+Run the same package build as a dry run before publishing:
+
+```sh
+npm run publish:dry-run
+```
+
+Marketplace publishing checklist:
+
+1. Make sure `publisher` in `package.json` is your registered VS Code Marketplace publisher ID.
+2. Add a real `repository` URL in `package.json` when the project has a public remote.
+3. Run `npm run verify`.
+4. Run `npm run package:vsix`.
+5. Install the VSIX locally with `code --install-extension out/codex-commit-message-generator-vscode-0.1.0.vsix --force`.
+6. Confirm the command palette and Source Control action work in an Extension Host or normal VS Code window.
+7. Upload the same VSIX with `vsce publish --packagePath out/codex-commit-message-generator-vscode-0.1.0.vsix` when you are ready.
+
+The package uses only stable public VS Code APIs and includes the required `README.md`, `LICENSE`, `package.json`, compiled `dist` entrypoint, and Marketplace metadata needed for a normal VSIX install.
 
 ## Manual Extension Host Checklist
 
