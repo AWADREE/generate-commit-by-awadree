@@ -1,0 +1,106 @@
+{
+  "name": "codex-commit-message-generator-vscode",
+  "displayName": "Codex Commit Message Generator",
+  "description": "Generate a commit message from Git changes with Codex and place it in the VS Code Source Control input.",
+  "version": "0.1.0",
+  "publisher": "local",
+  "license": "MIT",
+  "private": true,
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Source Control",
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:codexCommit.generateCommitMessage",
+    "onCommand:codexCommit.signIn",
+    "onCommand:codexCommit.signOut",
+    "onCommand:codexCommit.reauthenticate"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "codexCommit.generateCommitMessage",
+        "title": "Codex Commit: Generate Commit Message",
+        "category": "Codex Commit",
+        "icon": "$(sparkle)"
+      },
+      {
+        "command": "codexCommit.signIn",
+        "title": "Codex Commit: Sign In to Codex",
+        "category": "Codex Commit"
+      },
+      {
+        "command": "codexCommit.signOut",
+        "title": "Codex Commit: Sign Out of Codex",
+        "category": "Codex Commit"
+      },
+      {
+        "command": "codexCommit.reauthenticate",
+        "title": "Codex Commit: Reauthenticate Codex",
+        "category": "Codex Commit"
+      }
+    ],
+    "menus": {
+      "scm/title": [
+        {
+          "command": "codexCommit.generateCommitMessage",
+          "group": "navigation"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "codexCommit.generateCommitMessage"
+        },
+        {
+          "command": "codexCommit.signIn"
+        },
+        {
+          "command": "codexCommit.signOut"
+        },
+        {
+          "command": "codexCommit.reauthenticate"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Codex Commit Message Generator",
+      "properties": {
+        "codexCommit.customInstructions": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Optional extra instructions appended to the Codex commit message prompt."
+        },
+        "codexCommit.maxDiffChars": {
+          "type": "number",
+          "default": 60000,
+          "minimum": 4000,
+          "maximum": 200000,
+          "markdownDescription": "Maximum number of diff characters sent to Codex before safe truncation."
+        },
+        "codexCommit.codexCommand": {
+          "type": "string",
+          "default": "codex",
+          "markdownDescription": "Codex CLI executable to run. Change only if Codex is not on PATH."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "clean": "rimraf dist out",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "test": "vitest run",
+    "verify": "npm run compile && npm test"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.10",
+    "@types/vscode": "^1.90.0",
+    "rimraf": "^5.0.7",
+    "typescript": "^5.5.3",
+    "vitest": "^3.2.6"
+  }
+}

@@ -1,0 +1,9 @@
+.git/**
+.vscode/**
+src/**
+test/**
+*.map
+tsconfig.json
+vitest.config.*
+node_modules/.cache/**
+npm-debug.log*
