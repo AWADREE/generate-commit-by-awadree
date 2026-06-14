@@ -6,8 +6,9 @@ It never commits automatically.
 
 ## What It Does
 
-- Adds `Generate Commit by Codex: Generate Commit Message` to the Command Palette.
+- Adds `Generate Commit by Codex` to the Command Palette.
 - Adds a Source Control title action using stable public VS Code menu APIs.
+- When GitLens is installed, also contributes to GitLens' Source Control title GitLens/AI submenus where public menu contribution IDs are available.
 - Detects the active Git repository from the active editor or workspace.
 - Prefers staged changes from:
 
@@ -95,7 +96,7 @@ In VS Code:
 1. Open a folder that contains a Git repository.
 2. Stage files if you want the message generated from staged changes.
 3. Leave everything unstaged if you want the unstaged fallback.
-4. Run `Generate Commit by Codex: Generate Commit Message`.
+4. Run `Generate Commit by Codex`.
 5. Review the generated message in the Source Control commit input.
 6. Commit manually when you are satisfied.
 
@@ -157,6 +158,7 @@ This extension uses the closest stable public integration:
 
 - Command Palette command.
 - Source Control view title action through `contributes.menus["scm/title"]`.
+- GitLens Source Control title submenu contribution through GitLens' public manifest menu IDs, when GitLens is installed.
 - Commit input update through `vscode.scm.inputBox.value`.
 
 It does not use private GitLens internals or private VS Code APIs. If VS Code exposes a stable input-box button API in the future, the extension can move the action closer to the input box.
@@ -230,7 +232,7 @@ Run this after `npm install` and `npm run compile`.
 1. Press `F5` in VS Code to open an Extension Host.
 2. In the Extension Host, open a Git repository.
 3. Confirm the Command Palette lists:
-   - `Generate Commit by Codex: Generate Commit Message`
+   - `Generate Commit by Codex`
    - `Generate Commit by Codex: Sign In to Codex`
    - `Generate Commit by Codex: Sign Out of Codex`
    - `Generate Commit by Codex: Reauthenticate Codex`

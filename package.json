@@ -34,7 +34,7 @@
     "commands": [
       {
         "command": "codexCommit.generateCommitMessage",
-        "title": "Generate Commit by Codex: Generate Commit Message",
+        "title": "Generate Commit by Codex",
         "category": "Generate Commit by Codex",
         "icon": "$(sparkle)"
       },
@@ -58,7 +58,22 @@
       "scm/title": [
         {
           "command": "codexCommit.generateCommitMessage",
-          "group": "navigation"
+          "when": "scmProvider == git",
+          "group": "navigation@-2"
+        }
+      ],
+      "gitlens/scm/title": [
+        {
+          "command": "codexCommit.generateCommitMessage",
+          "when": "scmProvider == git",
+          "group": "1_gitlens@0"
+        }
+      ],
+      "gitlens/scm/title/ai": [
+        {
+          "command": "codexCommit.generateCommitMessage",
+          "when": "scmProvider == git",
+          "group": "1_gitlens@0"
         }
       ],
       "commandPalette": [
@@ -120,6 +135,6 @@
     "@vscode/vsce": "^3.9.2",
     "rimraf": "^5.0.7",
     "typescript": "^5.5.3",
-    "vitest": "^3.2.6"
+    "vitest": "^4.1.8"
   }
 }

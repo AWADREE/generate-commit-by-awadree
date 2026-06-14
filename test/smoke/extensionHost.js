@@ -29,6 +29,14 @@ async function run() {
     scmTitleMenu.some(item => item.command === 'codexCommit.generateCommitMessage'),
     'Expected generate command to be contributed to the Source Control title menu'
   );
+  assert.ok(
+    packageJson.contributes.menus['gitlens/scm/title'].some(item => item.command === 'codexCommit.generateCommitMessage'),
+    'Expected generate command to be contributed to the GitLens Source Control title menu'
+  );
+  assert.ok(
+    packageJson.contributes.menus['gitlens/scm/title/ai'].some(item => item.command === 'codexCommit.generateCommitMessage'),
+    'Expected generate command to be contributed to the GitLens AI Source Control title menu'
+  );
 
   await vscode.commands.executeCommand('codexCommit.generateCommitMessage');
 }
