@@ -103,7 +103,7 @@ Build a VSIX package and install it into your normal VS Code profile:
 ```sh
 npm install
 npm run package:vsix
-code --install-extension out/generate-commit-by-awadree-0.1.5.vsix --force
+code --install-extension out/generate-commit-by-awadree-0.1.6.vsix --force
 ```
 
 Or run the combined helper:
@@ -265,7 +265,7 @@ npm run package:vsix
 The generated file is:
 
 ```text
-out/generate-commit-by-awadree-0.1.5.vsix
+out/generate-commit-by-awadree-0.1.6.vsix
 ```
 
 Run the same package build as a dry run before publishing:
@@ -284,7 +284,7 @@ Marketplace publishing checklist:
 6. Keep the README's unofficial status and trademark notice visible on the Marketplace page.
 7. Run `npm run verify`.
 8. Run `npm run package:vsix`.
-9. Install the VSIX locally with `code --install-extension out/generate-commit-by-awadree-0.1.5.vsix --force`.
+9. Install the VSIX locally with `code --install-extension out/generate-commit-by-awadree-0.1.6.vsix --force`.
 10. Confirm the command palette and Source Control action work in an Extension Host or normal VS Code window.
 11. Configure Marketplace publishing credentials:
 
