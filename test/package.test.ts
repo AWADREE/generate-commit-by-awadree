@@ -40,12 +40,20 @@ describe('package contributions', () => {
     expect(packageJson.contributes.menus['scm/title']).toEqual(
       expect.arrayContaining([expect.objectContaining({ command: COMMANDS.generate })])
     );
-    expect(packageJson.contributes.menus['gitlens/scm/title']).toEqual(
+    expect(packageJson.contributes.menus['scm/repository']).toEqual(
       expect.arrayContaining([expect.objectContaining({ command: COMMANDS.generate })])
     );
-    expect(packageJson.contributes.menus['gitlens/scm/title/ai']).toEqual(
+    expect(packageJson.contributes.menus['scm/sourceControl']).toEqual(
       expect.arrayContaining([expect.objectContaining({ command: COMMANDS.generate })])
     );
+    expect(packageJson.contributes.menus['codexCommit/scm/title']).toEqual(
+      expect.arrayContaining([expect.objectContaining({ command: COMMANDS.generate })])
+    );
+    expect(packageJson.contributes.submenus).toEqual(
+      expect.arrayContaining([expect.objectContaining({ id: 'codexCommit/scm/title' })])
+    );
+    expect(packageJson.contributes.menus).not.toHaveProperty('gitlens/scm/title');
+    expect(packageJson.contributes.menus).not.toHaveProperty('gitlens/scm/title/ai');
     expect(packageJson.contributes.configuration.properties).toHaveProperty('codexCommit.customInstructions');
   });
 

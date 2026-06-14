@@ -60,20 +60,44 @@
           "command": "codexCommit.generateCommitMessage",
           "when": "scmProvider == git",
           "group": "navigation@-2"
+        },
+        {
+          "submenu": "codexCommit/scm/title",
+          "when": "scmProvider == git",
+          "group": "navigation@-1"
         }
       ],
-      "gitlens/scm/title": [
+      "scm/repository": [
         {
           "command": "codexCommit.generateCommitMessage",
           "when": "scmProvider == git",
-          "group": "1_gitlens@0"
+          "group": "navigation@1"
         }
       ],
-      "gitlens/scm/title/ai": [
+      "scm/sourceControl": [
         {
           "command": "codexCommit.generateCommitMessage",
           "when": "scmProvider == git",
-          "group": "1_gitlens@0"
+          "group": "navigation@1"
+        }
+      ],
+      "codexCommit/scm/title": [
+        {
+          "command": "codexCommit.generateCommitMessage",
+          "when": "scmProvider == git",
+          "group": "navigation@1"
+        },
+        {
+          "command": "codexCommit.signIn",
+          "group": "2_auth@1"
+        },
+        {
+          "command": "codexCommit.reauthenticate",
+          "group": "2_auth@2"
+        },
+        {
+          "command": "codexCommit.signOut",
+          "group": "2_auth@3"
         }
       ],
       "commandPalette": [
@@ -91,6 +115,13 @@
         }
       ]
     },
+    "submenus": [
+      {
+        "id": "codexCommit/scm/title",
+        "label": "Generate Commit by Codex",
+        "icon": "$(sparkle)"
+      }
+    ],
     "configuration": {
       "title": "Generate Commit by Codex",
       "properties": {

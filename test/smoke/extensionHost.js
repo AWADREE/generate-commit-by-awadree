@@ -30,13 +30,23 @@ async function run() {
     'Expected generate command to be contributed to the Source Control title menu'
   );
   assert.ok(
-    packageJson.contributes.menus['gitlens/scm/title'].some(item => item.command === 'codexCommit.generateCommitMessage'),
-    'Expected generate command to be contributed to the GitLens Source Control title menu'
+    packageJson.contributes.menus['scm/repository'].some(item => item.command === 'codexCommit.generateCommitMessage'),
+    'Expected generate command to be contributed to the SCM repository menu'
   );
   assert.ok(
-    packageJson.contributes.menus['gitlens/scm/title/ai'].some(item => item.command === 'codexCommit.generateCommitMessage'),
-    'Expected generate command to be contributed to the GitLens AI Source Control title menu'
+    packageJson.contributes.menus['scm/sourceControl'].some(item => item.command === 'codexCommit.generateCommitMessage'),
+    'Expected generate command to be contributed to the SCM source control menu'
   );
+  assert.ok(
+    packageJson.contributes.menus['codexCommit/scm/title'].some(item => item.command === 'codexCommit.generateCommitMessage'),
+    'Expected generate command to be contributed to the extension-owned SCM title submenu'
+  );
+  assert.ok(
+    packageJson.contributes.submenus.some(item => item.id === 'codexCommit/scm/title'),
+    'Expected extension-owned SCM title submenu to be declared'
+  );
+  assert.equal(packageJson.contributes.menus['gitlens/scm/title'], undefined);
+  assert.equal(packageJson.contributes.menus['gitlens/scm/title/ai'], undefined);
 
   await vscode.commands.executeCommand('codexCommit.generateCommitMessage');
 }
