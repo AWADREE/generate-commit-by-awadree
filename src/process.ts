@@ -20,7 +20,10 @@ export type RunProcess = (
 
 export const runProcess: RunProcess = (command, args, options = {}) => {
   return new Promise((resolve, reject) => {
-    const child = spawn(command, [...args], {
+    const shouldUseCmdShim = process.platform === 'win32' && /\.(?:cmd|bat)$/iu.test(command);
+    const commandToRun = shouldUseCmdShim ? (process.env.ComSpec ?? 'cmd.exe') : command;
+    const argsToRun = shouldUseCmdShim ? ['/d', '/c', command.replace(/\//gu, '\\'), ...args] : [...args];
+    const child = spawn(commandToRun, argsToRun, {
       cwd: options.cwd,
       shell: false,
       windowsHide: true,

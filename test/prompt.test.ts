@@ -14,8 +14,14 @@ describe('commit prompt', () => {
     });
 
     expect(prompt).toContain('Return only the commit message');
-    expect(prompt).toContain('Conventional Commit');
-    expect(prompt).toContain('at or below 72 characters');
+    expect(prompt).toContain('<type>[optional scope]: <description>');
+    expect(prompt).toContain('feat, fix, docs, refactor, test, chore, build, ci, perf, style, revert');
+    expect(prompt).toContain('imperative present tense');
+    expect(prompt).toContain('Target 50 characters or less');
+    expect(prompt).toContain('never exceed 72 characters');
+    expect(prompt).toContain('Separate the subject from the body with one blank line');
+    expect(prompt).toContain('Wrap body lines at 72 characters');
+    expect(prompt).toContain('BREAKING CHANGE:');
     expect(prompt).toContain('staged changes from git diff --cached --no-ext-diff');
     expect(prompt).toContain('The diff was truncated before sending');
     expect(prompt).toContain('feat: draft');

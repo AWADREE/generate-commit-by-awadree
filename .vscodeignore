@@ -9,5 +9,7 @@ test/**
 tsconfig.json
 vitest.config.*
 package-lock.json
+assets/codex-commit-*.svg
+assets/screenshots/**
 node_modules/.cache/**
 npm-debug.log*

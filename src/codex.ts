@@ -8,6 +8,8 @@ export interface CodexGenerationOptions {
   codexCommand: string;
   repoRoot: string;
   prompt: string;
+  model?: string;
+  reasoningEffort?: string;
 }
 
 function missingCommandMessage(command: string): string {
@@ -32,7 +34,7 @@ export async function checkCodexAuthenticated(run: RunProcess, codexCommand: str
   const result = await run(codexCommand, ['login', 'status'], { timeoutMs: 15000 });
   if (result.code !== 0) {
     const detail = (result.stderr || result.stdout).trim();
-    throw new Error(detail || 'Codex is not authenticated. Run "Generate Commit by Codex: Sign In to Codex".');
+    throw new Error(detail || 'Codex is not authenticated. Run "Generate Commit by Awadree: Sign In".');
   }
 }
 
@@ -46,15 +48,18 @@ export async function generateCommitMessage(
   );
 
   const args = [
+    '--ask-for-approval',
+    'never',
     'exec',
+    ...buildCodexExecOptionArgs(options),
+    '--config',
+    'web_search="disabled"',
     '--cd',
     options.repoRoot,
     '--skip-git-repo-check',
     '--ephemeral',
     '--sandbox',
     'read-only',
-    '--ask-for-approval',
-    'never',
     '--color',
     'never',
     '--output-last-message',
@@ -70,7 +75,7 @@ export async function generateCommitMessage(
     });
 
     if (result.code !== 0) {
-      const detail = (result.stderr || result.stdout).trim();
+      const detail = summarizeCodexFailure(result.stderr || result.stdout);
       throw new Error(detail || 'Codex generation failed.');
     }
 
@@ -82,4 +87,40 @@ export async function generateCommitMessage(
   } finally {
     await fs.rm(outputFile, { force: true }).catch(() => undefined);
   }
+}
+
+function summarizeCodexFailure(output: string): string {
+  const detail = output.trim();
+  if (!detail) {
+    return '';
+  }
+
+  const lines = detail.split(/\r?\n/u).map(line => line.trim()).filter(Boolean);
+  const errorLine = lines.find(line => /\bERROR\b|^error:/iu.test(line));
+  if (errorLine) {
+    return errorLine.length > 500 ? `${errorLine.slice(0, 497)}...` : errorLine;
+  }
+
+  const beforeTranscript = detail.split(/\n-{4,}\n/u)[0]?.trim() || detail;
+  return beforeTranscript.length > 500 ? `${beforeTranscript.slice(0, 497)}...` : beforeTranscript;
+}
+
+function quoteTomlString(value: string): string {
+  return JSON.stringify(value);
+}
+
+function buildCodexExecOptionArgs(options: CodexGenerationOptions): string[] {
+  const args: string[] = [];
+  const model = options.model?.trim();
+  const reasoningEffort = options.reasoningEffort?.trim();
+
+  if (model) {
+    args.push('--model', model);
+  }
+
+  if (reasoningEffort) {
+    args.push('--config', `model_reasoning_effort=${quoteTomlString(reasoningEffort)}`);
+  }
+
+  return args;
 }

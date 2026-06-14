@@ -1,15 +1,26 @@
 {
-  "name": "generate-commit-by-codex",
-  "displayName": "Generate Commit by Codex",
-  "description": "Generate a commit message from Git changes with Codex and place it in the VS Code Source Control input.",
-  "version": "0.1.0",
-  "publisher": "zoldy",
+  "name": "generate-commit-by-awadree",
+  "displayName": "Generate Commit by Awadree (Unofficial)",
+  "description": "Unofficial extension that generates a Git commit message from local changes using the Codex CLI.",
+  "version": "0.1.4",
+  "publisher": "Awadree",
   "license": "MIT",
+  "icon": "assets/extension-icon.png",
+  "markdown": "github",
+  "pricing": "Free",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Awadree/generate-commit-by-awadree.git"
+  },
+  "homepage": "https://github.com/Awadree/generate-commit-by-awadree#readme",
+  "bugs": {
+    "url": "https://github.com/Awadree/generate-commit-by-awadree/issues"
+  },
   "engines": {
     "vscode": "^1.90.0"
   },
   "categories": [
-    "Source Control",
+    "SCM Providers",
     "Other"
   ],
   "keywords": [
@@ -17,14 +28,18 @@
     "git",
     "commit",
     "commit message",
-    "source control"
+    "source control",
+    "conventional commits",
+    "ai"
   ],
   "galleryBanner": {
-    "color": "#111827",
+    "color": "#16243D",
     "theme": "dark"
   },
   "activationEvents": [
     "onCommand:codexCommit.generateCommitMessage",
+    "onCommand:codexCommit.selectModel",
+    "onCommand:codexCommit.selectReasoningEffort",
     "onCommand:codexCommit.signIn",
     "onCommand:codexCommit.signOut",
     "onCommand:codexCommit.reauthenticate"
@@ -34,27 +49,37 @@
     "commands": [
       {
         "command": "codexCommit.generateCommitMessage",
-        "title": "Generate Commit Message by Codex",
-        "category": "Generate Commit by Codex",
+        "title": "Generate Commit Message by Awadree",
+        "category": "Generate Commit by Awadree",
         "icon": {
-          "light": "assets/codex-commit-light.svg",
-          "dark": "assets/codex-commit-dark.svg"
+          "light": "assets/commit-spark-light.svg",
+          "dark": "assets/commit-spark-dark.svg"
         }
       },
       {
+        "command": "codexCommit.selectModel",
+        "title": "Generate Commit by Awadree: Select Model",
+        "category": "Generate Commit by Awadree"
+      },
+      {
+        "command": "codexCommit.selectReasoningEffort",
+        "title": "Generate Commit by Awadree: Select Reasoning Effort",
+        "category": "Generate Commit by Awadree"
+      },
+      {
         "command": "codexCommit.signIn",
-        "title": "Generate Commit by Codex: Sign In to Codex",
-        "category": "Generate Commit by Codex"
+        "title": "Generate Commit by Awadree: Sign In",
+        "category": "Generate Commit by Awadree"
       },
       {
         "command": "codexCommit.signOut",
-        "title": "Generate Commit by Codex: Sign Out of Codex",
-        "category": "Generate Commit by Codex"
+        "title": "Generate Commit by Awadree: Sign Out",
+        "category": "Generate Commit by Awadree"
       },
       {
         "command": "codexCommit.reauthenticate",
-        "title": "Generate Commit by Codex: Reauthenticate Codex",
-        "category": "Generate Commit by Codex"
+        "title": "Generate Commit by Awadree: Reauthenticate",
+        "category": "Generate Commit by Awadree"
       }
     ],
     "menus": {
@@ -63,49 +88,17 @@
           "command": "codexCommit.generateCommitMessage",
           "when": "scmProvider == git",
           "group": "navigation@-2"
-        },
-        {
-          "submenu": "codexCommit/scm/title",
-          "when": "scmProvider == git",
-          "group": "navigation@-1"
-        }
-      ],
-      "scm/repository": [
-        {
-          "command": "codexCommit.generateCommitMessage",
-          "when": "scmProvider == git",
-          "group": "navigation@1"
-        }
-      ],
-      "scm/sourceControl": [
-        {
-          "command": "codexCommit.generateCommitMessage",
-          "when": "scmProvider == git",
-          "group": "navigation@1"
-        }
-      ],
-      "codexCommit/scm/title": [
-        {
-          "command": "codexCommit.generateCommitMessage",
-          "when": "scmProvider == git",
-          "group": "navigation@1"
-        },
-        {
-          "command": "codexCommit.signIn",
-          "group": "2_auth@1"
-        },
-        {
-          "command": "codexCommit.reauthenticate",
-          "group": "2_auth@2"
-        },
-        {
-          "command": "codexCommit.signOut",
-          "group": "2_auth@3"
         }
       ],
       "commandPalette": [
         {
           "command": "codexCommit.generateCommitMessage"
+        },
+        {
+          "command": "codexCommit.selectModel"
+        },
+        {
+          "command": "codexCommit.selectReasoningEffort"
         },
         {
           "command": "codexCommit.signIn"
@@ -118,14 +111,8 @@
         }
       ]
     },
-    "submenus": [
-      {
-        "id": "codexCommit/scm/title",
-        "label": "Generate Commit Message by Codex"
-      }
-    ],
     "configuration": {
-      "title": "Generate Commit by Codex",
+      "title": "Generate Commit by Awadree",
       "properties": {
         "codexCommit.customInstructions": {
           "type": "string",
@@ -143,6 +130,42 @@
           "type": "string",
           "default": "codex",
           "markdownDescription": "Codex CLI executable to run. Change only if Codex is not on PATH."
+        },
+        "codexCommit.model": {
+          "type": "string",
+          "default": "gpt-5.4-mini",
+          "enum": [
+            "",
+            "gpt-5.4-mini",
+            "gpt-5.5",
+            "gpt-5.4",
+            "gpt-5.3-codex-spark"
+          ],
+          "enumItemLabels": [
+            "Use extension default",
+            "GPT-5.4 Mini",
+            "GPT-5.5",
+            "GPT-5.4",
+            "GPT-5.3 Codex Spark"
+          ],
+          "markdownDescription": "Codex model used only by this extension when generating commit messages. Empty or unsupported saved values fall back to the extension default."
+        },
+        "codexCommit.reasoningEffort": {
+          "type": "string",
+          "default": "low",
+          "enum": [
+            "",
+            "low",
+            "medium",
+            "high"
+          ],
+          "enumItemLabels": [
+            "Use extension default",
+            "Low",
+            "Medium",
+            "High"
+          ],
+          "markdownDescription": "Codex reasoning effort used only by this extension when generating commit messages. Empty or unsupported saved values fall back to the extension default."
         }
       }
     }
@@ -156,10 +179,10 @@
     "test:extension": "node ./test/run-extension-host.js",
     "verify": "npm run compile && npm run test:unit && npm run test:extension",
     "vscode:prepublish": "npm run compile",
-    "package:vsix": "node -e \"require('fs').mkdirSync('out',{recursive:true})\" && vsce package --allow-missing-repository --out out/generate-commit-by-codex-0.1.0.vsix",
-    "install:vsix": "npm run package:vsix && code --install-extension out/generate-commit-by-codex-0.1.0.vsix --force",
-    "publish:dry-run": "node -e \"require('fs').mkdirSync('out',{recursive:true})\" && vsce package --allow-missing-repository --out out/generate-commit-by-codex-0.1.0.vsix",
-    "publish:marketplace": "vsce publish --allow-missing-repository --packagePath out/generate-commit-by-codex-0.1.0.vsix --skip-duplicate"
+    "package:vsix": "node -e \"require('fs').mkdirSync('out',{recursive:true})\" && vsce package --baseContentUrl https://github.com/Awadree/generate-commit-by-awadree/blob/main/ --baseImagesUrl https://raw.githubusercontent.com/Awadree/generate-commit-by-awadree/main/ --out out/generate-commit-by-awadree-0.1.4.vsix",
+    "install:vsix": "npm run package:vsix && code --install-extension out/generate-commit-by-awadree-0.1.4.vsix --force",
+    "publish:dry-run": "node -e \"require('fs').mkdirSync('out',{recursive:true})\" && vsce package --baseContentUrl https://github.com/Awadree/generate-commit-by-awadree/blob/main/ --baseImagesUrl https://raw.githubusercontent.com/Awadree/generate-commit-by-awadree/main/ --out out/generate-commit-by-awadree-0.1.4.vsix",
+    "publish:marketplace": "vsce publish --packagePath out/generate-commit-by-awadree-0.1.4.vsix --skip-duplicate"
   },
   "devDependencies": {
     "@types/node": "^20.14.10",

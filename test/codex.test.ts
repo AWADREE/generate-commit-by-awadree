@@ -39,12 +39,10 @@ describe('Codex CLI checks', () => {
 
   it('runs codex exec with safe arguments and reads the final response file', async () => {
     const run: RunProcess = async (_command, args, options) => {
-      expect(args).toContain('exec');
+      expect(args.slice(0, 3)).toEqual(['--ask-for-approval', 'never', 'exec']);
       expect(args).toContain('--ephemeral');
       expect(args).toContain('--sandbox');
       expect(args).toContain('read-only');
-      expect(args).toContain('--ask-for-approval');
-      expect(args).toContain('never');
       expect(options?.cwd).toBe('/repo');
       expect(options?.input).toBe('prompt');
 
@@ -61,6 +59,31 @@ describe('Codex CLI checks', () => {
         prompt: 'prompt'
       })
     ).resolves.toBe('feat: add generated message');
+  });
+
+  it('passes model and config overrides only to the codex exec invocation', async () => {
+    const run: RunProcess = async (_command, args) => {
+      expect(args.slice(0, 3)).toEqual(['--ask-for-approval', 'never', 'exec']);
+      expect(args).toContain('--model');
+      expect(args[args.indexOf('--model') + 1]).toBe('gpt-5.5');
+      expect(args).toContain('--config');
+      expect(args).toContain('model_reasoning_effort="high"');
+      expect(args).toContain('web_search="disabled"');
+
+      const outputIndex = args.indexOf('--output-last-message');
+      await fs.writeFile(args[outputIndex + 1], 'fix: use configured codex options');
+      return result('');
+    };
+
+    await expect(
+      generateCommitMessage(run, {
+        codexCommand: 'codex',
+        repoRoot: '/repo',
+        prompt: 'prompt',
+        model: 'gpt-5.5',
+        reasoningEffort: 'high'
+      })
+    ).resolves.toBe('fix: use configured codex options');
   });
 
   it('rejects empty Codex output', async () => {

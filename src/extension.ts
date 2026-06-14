@@ -1,6 +1,13 @@
 import * as vscode from 'vscode';
 import { checkCodexAuthenticated, checkCodexAvailable, generateCommitMessage } from './codex';
-import { COMMANDS, CONFIG_SECTION } from './constants';
+import {
+  COMMANDS,
+  CONFIG_SECTION,
+  DEFAULT_CODEX_MODEL,
+  DEFAULT_REASONING_EFFORT,
+  SUPPORTED_CODEX_MODELS,
+  SUPPORTED_REASONING_EFFORTS
+} from './constants';
 import { prepareDiffForPrompt } from './diff';
 import { getPreferredDiff, resolveGitWorkspace } from './git';
 import { runProcess } from './process';
@@ -10,6 +17,23 @@ interface ExtensionConfig {
   codexCommand: string;
   customInstructions: string;
   maxDiffChars: number;
+  model: string;
+  reasoningEffort: string;
+}
+
+interface GitRepository {
+  rootUri: vscode.Uri;
+  inputBox: {
+    value: string;
+  };
+}
+
+interface GitApi {
+  repositories: GitRepository[];
+}
+
+interface GitExtension {
+  getAPI(version: 1): GitApi;
 }
 
 function getConfig(): ExtensionConfig {
@@ -17,8 +41,36 @@ function getConfig(): ExtensionConfig {
   return {
     codexCommand: config.get<string>('codexCommand', 'codex'),
     customInstructions: config.get<string>('customInstructions', ''),
-    maxDiffChars: config.get<number>('maxDiffChars', 60000)
+    maxDiffChars: config.get<number>('maxDiffChars', 60000),
+    model: normalizeModel(config.get<string>('model', DEFAULT_CODEX_MODEL)),
+    reasoningEffort: normalizeReasoningEffort(config.get<string>('reasoningEffort', DEFAULT_REASONING_EFFORT))
   };
+}
+
+function normalizeModel(value: string | undefined): string {
+  const model = value?.trim();
+  return model && (SUPPORTED_CODEX_MODELS as readonly string[]).includes(model) ? model : DEFAULT_CODEX_MODEL;
+}
+
+function normalizeReasoningEffort(value: string | undefined): string {
+  const effort = value?.trim();
+  return effort && (SUPPORTED_REASONING_EFFORTS as readonly string[]).includes(effort) ? effort : DEFAULT_REASONING_EFFORT;
+}
+
+async function migrateConfiguration(): Promise<void> {
+  const config = vscode.workspace.getConfiguration(CONFIG_SECTION);
+  const configuredModel = config.get<string>('model', DEFAULT_CODEX_MODEL);
+  const configuredReasoningEffort = config.get<string>('reasoningEffort', DEFAULT_REASONING_EFFORT);
+  const normalizedModel = normalizeModel(configuredModel);
+  const normalizedReasoningEffort = normalizeReasoningEffort(configuredReasoningEffort);
+
+  if (configuredModel !== normalizedModel) {
+    await config.update('model', normalizedModel, vscode.ConfigurationTarget.Global);
+  }
+
+  if (configuredReasoningEffort !== normalizedReasoningEffort) {
+    await config.update('reasoningEffort', normalizedReasoningEffort, vscode.ConfigurationTarget.Global);
+  }
 }
 
 function getCandidateDirectories(): string[] {
@@ -29,6 +81,26 @@ function getCandidateDirectories(): string[] {
     activeWorkspace?.uri.fsPath,
     ...workspaceFolders.map(folder => folder.uri.fsPath)
   ].filter((value): value is string => Boolean(value));
+}
+
+async function getGitApi(): Promise<GitApi | undefined> {
+  const extension = vscode.extensions.getExtension<GitExtension>('vscode.git');
+  if (!extension) {
+    return undefined;
+  }
+
+  const gitExtension = extension.isActive ? extension.exports : await extension.activate();
+  return gitExtension.getAPI(1);
+}
+
+function normalizePath(value: string): string {
+  return value.replace(/\\/gu, '/').replace(/\/+$/u, '').toLowerCase();
+}
+
+async function getGitRepositoryForRoot(repoRoot: string): Promise<GitRepository | undefined> {
+  const api = await getGitApi();
+  const normalizedRoot = normalizePath(repoRoot);
+  return api?.repositories.find(repository => normalizePath(repository.rootUri.fsPath) === normalizedRoot);
 }
 
 function hasOfficialCodexExtensionSignal(): boolean {
@@ -83,65 +155,143 @@ async function reauthenticate(): Promise<void> {
   }
 }
 
+async function selectModel(): Promise<void> {
+  const config = vscode.workspace.getConfiguration(CONFIG_SECTION);
+  const current = normalizeModel(config.get<string>('model', DEFAULT_CODEX_MODEL));
+  const selection = await vscode.window.showQuickPick(
+    [
+      {
+        label: DEFAULT_CODEX_MODEL,
+        description: 'Default. Fast, lower-cost model for lightweight commit messages',
+        value: DEFAULT_CODEX_MODEL
+      },
+      {
+        label: 'gpt-5.5',
+        description: 'Newest frontier model for complex coding workflows',
+        value: 'gpt-5.5'
+      },
+      {
+        label: 'gpt-5.4',
+        description: 'Flagship model for professional coding work',
+        value: 'gpt-5.4'
+      },
+      {
+        label: 'gpt-5.3-codex-spark',
+        description: 'Research preview, near-instant coding model for ChatGPT Pro users',
+        value: 'gpt-5.3-codex-spark'
+      },
+      {
+        label: 'Use extension default',
+        description: `Currently ${current}`,
+        value: ''
+      }
+    ],
+    { placeHolder: `Codex model for this extension${current ? ` (current: ${current})` : ''}` }
+  );
+
+  if (!selection) {
+    return;
+  }
+
+  const value = selection.value || DEFAULT_CODEX_MODEL;
+  await config.update('model', value, vscode.ConfigurationTarget.Global);
+  vscode.window.showInformationMessage(`Awadree commit model set to ${value}.`);
+}
+
+async function selectReasoningEffort(): Promise<void> {
+  const config = vscode.workspace.getConfiguration(CONFIG_SECTION);
+  const current = normalizeReasoningEffort(config.get<string>('reasoningEffort', DEFAULT_REASONING_EFFORT));
+  const selection = await vscode.window.showQuickPick(
+    [
+      { label: DEFAULT_REASONING_EFFORT, description: 'Default. Fastest and usually enough for concise commit messages', value: DEFAULT_REASONING_EFFORT },
+      { label: 'medium', description: 'Balanced reasoning for more complex diffs', value: 'medium' },
+      { label: 'high', description: 'More reasoning for broad or subtle changes', value: 'high' },
+      { label: 'Use extension default', description: `Currently ${current}`, value: '' }
+    ],
+    { placeHolder: `Codex reasoning effort for this extension${current ? ` (current: ${current})` : ''}` }
+  );
+
+  if (!selection) {
+    return;
+  }
+
+  const value = selection.value || DEFAULT_REASONING_EFFORT;
+  await config.update('reasoningEffort', value, vscode.ConfigurationTarget.Global);
+  vscode.window.showInformationMessage(`Awadree commit reasoning effort set to ${value}.`);
+}
+
 async function generate(): Promise<void> {
-  const config = getConfig();
-  const workspace = await resolveGitWorkspace(runProcess, getCandidateDirectories());
-  if (!workspace) {
-    vscode.window.showErrorMessage('No Git repository found for the active editor or workspace.');
-    return;
-  }
-
-  let diffResult;
-  try {
-    diffResult = await getPreferredDiff(runProcess, workspace.repoRoot);
-  } catch (error) {
-    const detail = error instanceof Error ? error.message : String(error);
-    vscode.window.showErrorMessage(`Unable to read Git changes: ${detail}`);
-    return;
-  }
-
-  if (!diffResult) {
-    vscode.window.showWarningMessage('No staged or unstaged Git changes found. Nothing was generated.');
-    return;
-  }
-
-  try {
-    await checkCodexAvailable(runProcess, config.codexCommand);
-    await checkCodexAuthenticated(runProcess, config.codexCommand);
-  } catch (error) {
-    const detail = error instanceof Error ? error.message : String(error);
-    const action = await vscode.window.showErrorMessage(detail, 'Sign In to Codex');
-    if (action === 'Sign In to Codex') {
-      await signIn();
-    }
-    return;
-  }
-
-  const preparedDiff = prepareDiffForPrompt(diffResult.diff, config.maxDiffChars);
-  const prompt = buildCommitPrompt({
-    diff: preparedDiff.text,
-    diffKind: diffResult.kind,
-    existingInput: vscode.scm.inputBox.value,
-    customInstructions: config.customInstructions,
-    wasTruncated: preparedDiff.wasTruncated,
-    originalLength: preparedDiff.originalLength,
-    sentLength: preparedDiff.sentLength
-  });
-
   await vscode.window.withProgress(
     {
       location: vscode.ProgressLocation.Notification,
-      title: `Codex is generating a commit message from ${diffResult.kind} changes`,
+      title: 'Generate Commit Message by Awadree',
       cancellable: false
     },
-    async () => {
+    async progress => {
+      const config = getConfig();
+      progress.report({ message: 'Finding Git repository...' });
+      const workspace = await resolveGitWorkspace(runProcess, getCandidateDirectories());
+      if (!workspace) {
+        vscode.window.showErrorMessage('No Git repository found for the active editor or workspace.');
+        return;
+      }
+
+      progress.report({ message: 'Reading staged changes...' });
+      let diffResult;
+      try {
+        diffResult = await getPreferredDiff(runProcess, workspace.repoRoot);
+      } catch (error) {
+        const detail = error instanceof Error ? error.message : String(error);
+        vscode.window.showErrorMessage(`Unable to read Git changes: ${detail}`);
+        return;
+      }
+
+      if (!diffResult) {
+        vscode.window.showWarningMessage('No staged or unstaged Git changes found. Nothing was generated.');
+        return;
+      }
+
+      progress.report({ message: 'Checking Codex CLI and sign-in...' });
+      try {
+        await checkCodexAvailable(runProcess, config.codexCommand);
+        await checkCodexAuthenticated(runProcess, config.codexCommand);
+      } catch (error) {
+        const detail = error instanceof Error ? error.message : String(error);
+        void vscode.window.showErrorMessage(detail, 'Sign In').then(async action => {
+          if (action === 'Sign In') {
+            await signIn();
+          }
+        });
+        return;
+      }
+
+      const gitRepository = await getGitRepositoryForRoot(workspace.repoRoot);
+      const existingInput = gitRepository?.inputBox.value ?? vscode.scm.inputBox.value;
+      const preparedDiff = prepareDiffForPrompt(diffResult.diff, config.maxDiffChars);
+      const prompt = buildCommitPrompt({
+        diff: preparedDiff.text,
+        diffKind: diffResult.kind,
+        existingInput,
+        customInstructions: config.customInstructions,
+        wasTruncated: preparedDiff.wasTruncated,
+        originalLength: preparedDiff.originalLength,
+        sentLength: preparedDiff.sentLength
+      });
+
+      progress.report({ message: `Generating from ${diffResult.kind} changes...` });
       try {
         const message = await generateCommitMessage(runProcess, {
           codexCommand: config.codexCommand,
           repoRoot: workspace.repoRoot,
-          prompt
+          prompt,
+          model: config.model,
+          reasoningEffort: config.reasoningEffort
         });
-        vscode.scm.inputBox.value = message;
+        if (gitRepository) {
+          gitRepository.inputBox.value = message;
+        } else {
+          vscode.scm.inputBox.value = message;
+        }
         if (preparedDiff.wasTruncated) {
           vscode.window.showInformationMessage('Codex generated a commit message. The diff was truncated before generation.');
         } else {
@@ -156,8 +306,12 @@ async function generate(): Promise<void> {
 }
 
 export function activate(context: vscode.ExtensionContext): void {
+  void migrateConfiguration();
+
   context.subscriptions.push(
     vscode.commands.registerCommand(COMMANDS.generate, generate),
+    vscode.commands.registerCommand(COMMANDS.selectModel, selectModel),
+    vscode.commands.registerCommand(COMMANDS.selectReasoningEffort, selectReasoningEffort),
     vscode.commands.registerCommand(COMMANDS.signIn, signIn),
     vscode.commands.registerCommand(COMMANDS.signOut, signOut),
     vscode.commands.registerCommand(COMMANDS.reauthenticate, reauthenticate)
