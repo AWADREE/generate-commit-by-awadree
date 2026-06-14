@@ -30,6 +30,24 @@ describe('package contributions', () => {
     expect((packageJson as { name: string; displayName: string }).displayName).toBe('Generate Commit by Codex');
   });
 
+  it('labels the generate action and gives it extension-owned icons', () => {
+    const generateCommand = packageJson.contributes.commands.find(command => command.command === COMMANDS.generate);
+
+    expect(generateCommand?.title).toBe('Generate Commit Message by Codex');
+    expect(generateCommand?.icon).toEqual({
+      light: 'assets/codex-commit-light.svg',
+      dark: 'assets/codex-commit-dark.svg'
+    });
+    expect(packageJson.contributes.submenus).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: 'codexCommit/scm/title',
+          label: 'Generate Commit Message by Codex'
+        })
+      ])
+    );
+  });
+
   it('activates on all required commands', () => {
     for (const command of Object.values(COMMANDS)) {
       expect(packageJson.activationEvents).toContain(`onCommand:${command}`);

@@ -6,7 +6,7 @@ It never commits automatically.
 
 ## What It Does
 
-- Adds `Generate Commit by Codex` to the Command Palette.
+- Adds `Generate Commit Message by Codex` to the Command Palette.
 - Adds its own Source Control title button/submenu using stable public VS Code menu APIs.
 - Adds Source Control repository/source-control menu entries for discoverability.
 - Detects the active Git repository from the active editor or workspace.
@@ -96,7 +96,7 @@ In VS Code:
 1. Open a folder that contains a Git repository.
 2. Stage files if you want the message generated from staged changes.
 3. Leave everything unstaged if you want the unstaged fallback.
-4. Run `Generate Commit by Codex`.
+4. Run `Generate Commit Message by Codex`.
 5. Review the generated message in the Source Control commit input.
 6. Commit manually when you are satisfied.
 
@@ -233,7 +233,7 @@ Run this after `npm install` and `npm run compile`.
 1. Press `F5` in VS Code to open an Extension Host.
 2. In the Extension Host, open a Git repository.
 3. Confirm the Command Palette lists:
-   - `Generate Commit by Codex`
+   - `Generate Commit Message by Codex`
    - `Generate Commit by Codex: Sign In to Codex`
    - `Generate Commit by Codex: Sign Out of Codex`
    - `Generate Commit by Codex: Reauthenticate Codex`

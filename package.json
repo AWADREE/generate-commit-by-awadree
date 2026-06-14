@@ -34,9 +34,12 @@
     "commands": [
       {
         "command": "codexCommit.generateCommitMessage",
-        "title": "Generate Commit by Codex",
+        "title": "Generate Commit Message by Codex",
         "category": "Generate Commit by Codex",
-        "icon": "$(sparkle)"
+        "icon": {
+          "light": "assets/codex-commit-light.svg",
+          "dark": "assets/codex-commit-dark.svg"
+        }
       },
       {
         "command": "codexCommit.signIn",
@@ -118,8 +121,7 @@
     "submenus": [
       {
         "id": "codexCommit/scm/title",
-        "label": "Generate Commit by Codex",
-        "icon": "$(sparkle)"
+        "label": "Generate Commit Message by Codex"
       }
     ],
     "configuration": {

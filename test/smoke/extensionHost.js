@@ -18,6 +18,10 @@ async function run() {
   await extension.activate();
   assert.equal(extension.isActive, true, 'Extension should activate successfully');
   assert.equal(packageJson.displayName, 'Generate Commit by Codex');
+  assert.equal(
+    packageJson.contributes.commands.find(command => command.command === 'codexCommit.generateCommitMessage').title,
+    'Generate Commit Message by Codex'
+  );
 
   const registeredCommands = await vscode.commands.getCommands(true);
   for (const commandId of commandIds) {
