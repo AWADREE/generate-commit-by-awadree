@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.5
+
+- Move Codex-only, sign-in, and Source Control button guidance near the top of the Marketplace page.
+- Replace the extension-logo README image with the actual dark-theme and light-theme toolbar button icons.
+- Add a Marketplace listing link to the GitHub README.
+
 ## 0.1.4
 
 - Restore the README button image and document that repository assets must be public for Marketplace rendering.

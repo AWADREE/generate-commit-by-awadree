@@ -8,6 +8,32 @@ A focused, unofficial VS Code extension that generates one commit message from t
 
 It never commits automatically. This project is not created by, affiliated with, sponsored by, or endorsed by OpenAI, Microsoft, GitHub, or the VS Code team.
 
+Marketplace listing: [Generate Commit by Awadree](https://marketplace.visualstudio.com/items?itemName=Awadree.generate-commit-by-awadree)
+
+## Sign In First
+
+Run `Generate Commit by Awadree: Sign In` from the Command Palette. The extension opens a VS Code terminal and runs:
+
+```sh
+codex login
+```
+
+Complete the Codex browser sign-in, then return to VS Code.
+
+## Find The Button
+
+Open the Source Control view and look in the top-right title toolbar for the commit-spark button. Hover the icon to confirm the tooltip says `Generate Commit Message by Awadree`, then press it to generate the commit message.
+
+Dark theme button icon:
+
+![Generate Commit Message by Awadree dark theme button icon](assets/commit-spark-dark.png)
+
+Light theme button icon:
+
+![Generate Commit Message by Awadree light theme button icon](assets/commit-spark-light.png)
+
+The toolbar button uses original extension artwork and does not use the OpenAI or Codex logo.
+
 ## What It Does
 
 - Adds `Generate Commit Message by Awadree` to the Command Palette.
@@ -77,7 +103,7 @@ Build a VSIX package and install it into your normal VS Code profile:
 ```sh
 npm install
 npm run package:vsix
-code --install-extension out/generate-commit-by-awadree-0.1.4.vsix --force
+code --install-extension out/generate-commit-by-awadree-0.1.5.vsix --force
 ```
 
 Or run the combined helper:
@@ -115,12 +141,6 @@ In VS Code:
 5. Review the generated message in the Source Control commit input.
 6. Commit manually when you are satisfied.
 
-You can also use the Source Control title button. Open the Source Control view and look in the top-right title toolbar for the commit-spark button:
-
-![Generate Commit Message by Awadree button icon](assets/extension-icon.png)
-
-Hover the icon to confirm the tooltip says `Generate Commit Message by Awadree`, then press it to generate the commit message. The toolbar button uses original extension artwork and does not use the OpenAI or Codex logo. It has separate light-theme and dark-theme variants so it remains visible across VS Code themes.
-
 ## Unofficial Status And Trademark Notice
 
 This extension is unofficial. It is built by an independent publisher and uses the local Codex CLI as a user-installed dependency.
@@ -129,13 +149,7 @@ OpenAI, Codex, Microsoft, Visual Studio Code, GitHub, and Git are names or marks
 
 Before publishing publicly, review the current Visual Studio Marketplace policies, OpenAI brand guidance, and any third-party terms that apply to your publisher account and distribution location.
 
-## Codex Sign-In
-
-Run `Generate Commit by Awadree: Sign In` from the Command Palette. The extension opens a VS Code terminal and runs:
-
-```sh
-codex login
-```
+## Codex Sign-In Details
 
 The Codex CLI handles browser-based sign-in and stores its own shared local credentials. The Codex CLI login state is treated as the source of truth because the CLI and Codex IDE integrations share cached local login state.
 
@@ -251,7 +265,7 @@ npm run package:vsix
 The generated file is:
 
 ```text
-out/generate-commit-by-awadree-0.1.4.vsix
+out/generate-commit-by-awadree-0.1.5.vsix
 ```
 
 Run the same package build as a dry run before publishing:
@@ -270,7 +284,7 @@ Marketplace publishing checklist:
 6. Keep the README's unofficial status and trademark notice visible on the Marketplace page.
 7. Run `npm run verify`.
 8. Run `npm run package:vsix`.
-9. Install the VSIX locally with `code --install-extension out/generate-commit-by-awadree-0.1.4.vsix --force`.
+9. Install the VSIX locally with `code --install-extension out/generate-commit-by-awadree-0.1.5.vsix --force`.
 10. Confirm the command palette and Source Control action work in an Extension Host or normal VS Code window.
 11. Configure Marketplace publishing credentials:
 
