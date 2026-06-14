@@ -3,5 +3,6 @@ dist/
 out/
 *.vsix
 .vscode-test/
+assets/screenshots/
 .DS_Store
 npm-debug.log*
