@@ -103,7 +103,7 @@ Build a VSIX package and install it into your normal VS Code profile:
 ```sh
 npm install
 npm run package:vsix
-code --install-extension out/generate-commit-by-awadree-0.1.6.vsix --force
+code --install-extension out/generate-commit-by-awadree-0.1.7.vsix --force
 ```
 
 Or run the combined helper:
@@ -215,13 +215,17 @@ The default prompt asks Codex to:
 - Write the description in imperative present tense, as if completing "This commit will ...".
 - Keep the description concise, lower-case after the type unless a proper noun requires capitalization, and without a final period.
 - Target 50 characters or less for the first line; never exceed 72 characters.
-- Add a body only when useful to explain why, user impact, migration notes, risks, or non-obvious side effects.
+- Use a one-line message only for tiny, single-purpose diffs.
+- Include a body for multi-file, multi-area, behavior-changing, refactor-heavy, truncated, or otherwise non-trivial diffs.
 - Separate the subject from the body with one blank line.
 - Wrap body lines at 72 characters.
-- Use the body to explain what and why; avoid repeating obvious implementation details from the diff.
+- Use 2-6 concise body bullets to group important changes by intent, area, or user impact.
+- Use body bullets to explain why the change matters, risks, migrations, configuration changes, and non-obvious side effects.
+- Avoid listing every changed file; summarize the meaningful change groups a reviewer needs to understand.
 - Add a `BREAKING CHANGE:` footer when the diff clearly introduces a breaking change.
 - Include issue references or trailers only if they are clearly present in the diff or existing input.
-- Describe the intent of the change, not only file names.
+- Analyze the diff and any existing Source Control input to produce a clear, descriptive, meaningful message.
+- Describe the intent and reviewer-relevant context of the change, not only file names.
 - Avoid claiming that it committed anything.
 
 ## Known VS Code UI Limits
@@ -265,7 +269,7 @@ npm run package:vsix
 The generated file is:
 
 ```text
-out/generate-commit-by-awadree-0.1.6.vsix
+out/generate-commit-by-awadree-0.1.7.vsix
 ```
 
 Run the same package build as a dry run before publishing:
@@ -284,7 +288,7 @@ Marketplace publishing checklist:
 6. Keep the README's unofficial status and trademark notice visible on the Marketplace page.
 7. Run `npm run verify`.
 8. Run `npm run package:vsix`.
-9. Install the VSIX locally with `code --install-extension out/generate-commit-by-awadree-0.1.6.vsix --force`.
+9. Install the VSIX locally with `code --install-extension out/generate-commit-by-awadree-0.1.7.vsix --force`.
 10. Confirm the command palette and Source Control action work in an Extension Host or normal VS Code window.
 11. Configure Marketplace publishing credentials:
 

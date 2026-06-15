@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.7
+
+- Strengthen commit message prompt rules so non-trivial diffs produce a descriptive multi-line message with reviewer-focused body bullets.
+
 ## 0.1.5
 
 - Move Codex-only, sign-in, and Source Control button guidance near the top of the Marketplace page.

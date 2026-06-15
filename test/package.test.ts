@@ -33,7 +33,7 @@ describe('package contributions', () => {
     expect((packageJson as { name: string; displayName: string; publisher: string; version: string }).name).toBe(
       'generate-commit-by-awadree'
     );
-    expect((packageJson as { name: string; displayName: string; publisher: string; version: string }).version).toBe('0.1.6');
+    expect((packageJson as { name: string; displayName: string; publisher: string; version: string }).version).toBe('0.1.7');
     expect((packageJson as { name: string; displayName: string; publisher: string; version: string }).publisher).toBe('Awadree');
     expect((packageJson as { name: string; displayName: string; publisher: string; version: string }).displayName).toBe(
       'Generate Commit by Awadree (Unofficial)'
