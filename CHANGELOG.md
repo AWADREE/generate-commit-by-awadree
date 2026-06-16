@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.8
+
+- Match GitLens-style commit message bodies with scoped subjects and detailed, capitalized, past-tense bullet points for non-trivial diffs.
+
 ## 0.1.7
 
 - Strengthen commit message prompt rules so non-trivial diffs produce a descriptive multi-line message with reviewer-focused body bullets.

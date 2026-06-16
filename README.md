@@ -103,7 +103,7 @@ Build a VSIX package and install it into your normal VS Code profile:
 ```sh
 npm install
 npm run package:vsix
-code --install-extension out/generate-commit-by-awadree-0.1.7.vsix --force
+code --install-extension out/generate-commit-by-awadree-0.1.8.vsix --force
 ```
 
 Or run the combined helper:
@@ -212,16 +212,24 @@ The default prompt asks Codex to:
 - Avoid markdown and explanation.
 - Use Conventional Commit format when a type can be inferred: `<type>[optional scope]: <description>`.
 - Prefer `feat`, `fix`, `docs`, `refactor`, `test`, `chore`, `build`, `ci`, `perf`, `style`, or `revert`.
+- Include a concise scope when the diff clearly centers on one area, feature, app, package, or service.
 - Write the description in imperative present tense, as if completing "This commit will ...".
-- Keep the description concise, lower-case after the type unless a proper noun requires capitalization, and without a final period.
-- Target 50 characters or less for the first line; never exceed 72 characters.
+- Keep the subject description concise, lower-case after the type unless a proper noun, acronym, brand, language, or domain term requires capitalization, and without a final period.
+- Keep the first line at 72 characters or less.
 - Use a one-line message only for tiny, single-purpose diffs.
 - Include a body for multi-file, multi-area, behavior-changing, refactor-heavy, truncated, or otherwise non-trivial diffs.
 - Separate the subject from the body with one blank line.
 - Wrap body lines at 72 characters.
-- Use 2-6 concise body bullets to group important changes by intent, area, or user impact.
+- Use detailed body bullets for non-trivial changes.
+- Use 4-7 body bullets for medium diffs and 7-10 body bullets for broad diffs with many changed files or distinct changes.
+- Format every body bullet as `- Capitalized past-tense sentence.`
+- Start body bullets with strong past-tense verbs such as `Added`, `Implemented`, `Created`, `Updated`, `Refactored`, `Introduced`, `Defined`, `Established`, or `Improved`.
+- Capitalize sentence starts and preserve proper capitalization for acronyms, languages, frameworks, products, and domain terms such as `API`, `CRM`, `KPI`, `Arabic`, `English`, `React`, and `Codex`.
+- End every body bullet with a period.
+- Use body bullets to group important changes by intent, area, component, data flow, or user impact.
 - Use body bullets to explain why the change matters, risks, migrations, configuration changes, and non-obvious side effects.
 - Avoid listing every changed file; summarize the meaningful change groups a reviewer needs to understand.
+- Prefer the descriptive style of GitLens-generated commit messages.
 - Add a `BREAKING CHANGE:` footer when the diff clearly introduces a breaking change.
 - Include issue references or trailers only if they are clearly present in the diff or existing input.
 - Analyze the diff and any existing Source Control input to produce a clear, descriptive, meaningful message.
@@ -269,7 +277,7 @@ npm run package:vsix
 The generated file is:
 
 ```text
-out/generate-commit-by-awadree-0.1.7.vsix
+out/generate-commit-by-awadree-0.1.8.vsix
 ```
 
 Run the same package build as a dry run before publishing:
@@ -288,7 +296,7 @@ Marketplace publishing checklist:
 6. Keep the README's unofficial status and trademark notice visible on the Marketplace page.
 7. Run `npm run verify`.
 8. Run `npm run package:vsix`.
-9. Install the VSIX locally with `code --install-extension out/generate-commit-by-awadree-0.1.7.vsix --force`.
+9. Install the VSIX locally with `code --install-extension out/generate-commit-by-awadree-0.1.8.vsix --force`.
 10. Confirm the command palette and Source Control action work in an Extension Host or normal VS Code window.
 11. Configure Marketplace publishing credentials:
 
