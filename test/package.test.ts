@@ -22,6 +22,7 @@ describe('package contributions', () => {
     const commands = packageJson.contributes.commands.map(command => command.command);
 
     expect(commands).toContain(COMMANDS.generate);
+    expect(commands).toContain(COMMANDS.installCodexCli);
     expect(commands).toContain(COMMANDS.selectModel);
     expect(commands).toContain(COMMANDS.selectReasoningEffort);
     expect(commands).toContain(COMMANDS.signIn);
@@ -33,7 +34,7 @@ describe('package contributions', () => {
     expect((packageJson as { name: string; displayName: string; publisher: string; version: string }).name).toBe(
       'generate-commit-by-awadree'
     );
-    expect((packageJson as { name: string; displayName: string; publisher: string; version: string }).version).toBe('0.1.8');
+    expect((packageJson as { name: string; displayName: string; publisher: string; version: string }).version).toBe('0.1.9');
     expect((packageJson as { name: string; displayName: string; publisher: string; version: string }).publisher).toBe('Awadree');
     expect((packageJson as { name: string; displayName: string; publisher: string; version: string }).displayName).toBe(
       'Generate Commit by Awadree (Unofficial)'
@@ -66,6 +67,7 @@ describe('package contributions', () => {
     );
     expect(packageJson.contributes.menus.commandPalette).toEqual(
       expect.arrayContaining([
+        expect.objectContaining({ command: COMMANDS.installCodexCli }),
         expect.objectContaining({ command: COMMANDS.selectModel }),
         expect.objectContaining({ command: COMMANDS.selectReasoningEffort }),
       ])

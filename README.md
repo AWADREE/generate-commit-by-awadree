@@ -4,6 +4,21 @@
 
 This extension currently works only with the local Codex CLI. Install and sign in to Codex before using it to generate commit messages.
 
+The extension does not silently install Codex CLI or start authentication when it is installed. If Codex CLI is missing, run `Generate Commit by Awadree: Install Codex CLI` from the Command Palette. The command asks for confirmation, opens a VS Code terminal, runs the official installer, and then starts `codex login`.
+
+Official Codex CLI install commands:
+
+```sh
+# Windows
+powershell -ExecutionPolicy ByPass -c "irm https://chatgpt.com/codex/install.ps1 | iex"
+
+# macOS or Linux
+curl -fsSL https://chatgpt.com/codex/install.sh | sh
+
+# npm alternative
+npm install -g @openai/codex
+```
+
 A focused, unofficial VS Code extension that generates one commit message from the current Git changes using the local Codex CLI, then writes the result into the VS Code Source Control commit input.
 
 It never commits automatically. This project is not created by, affiliated with, sponsored by, or endorsed by OpenAI, Microsoft, GitHub, or the VS Code team.
@@ -12,7 +27,7 @@ Marketplace listing: [Generate Commit by Awadree](https://marketplace.visualstud
 
 ## Sign In First
 
-Run `Generate Commit by Awadree: Sign In` from the Command Palette. The extension opens a VS Code terminal and runs:
+After Codex CLI is installed, run `Generate Commit by Awadree: Sign In` from the Command Palette. The extension opens a VS Code terminal and runs:
 
 ```sh
 codex login
@@ -103,7 +118,7 @@ Build a VSIX package and install it into your normal VS Code profile:
 ```sh
 npm install
 npm run package:vsix
-code --install-extension out/generate-commit-by-awadree-0.1.8.vsix --force
+code --install-extension out/generate-commit-by-awadree-0.1.9.vsix --force
 ```
 
 Or run the combined helper:
@@ -198,6 +213,7 @@ These settings do not edit `~/.codex/config.toml` or project `.codex/config.toml
 Run these from `Ctrl+Shift+P`:
 
 - `Generate Commit Message by Awadree`
+- `Generate Commit by Awadree: Install Codex CLI`
 - `Generate Commit by Awadree: Select Model`
 - `Generate Commit by Awadree: Select Reasoning Effort`
 - `Generate Commit by Awadree: Sign In`
@@ -277,7 +293,7 @@ npm run package:vsix
 The generated file is:
 
 ```text
-out/generate-commit-by-awadree-0.1.8.vsix
+out/generate-commit-by-awadree-0.1.9.vsix
 ```
 
 Run the same package build as a dry run before publishing:
@@ -296,7 +312,7 @@ Marketplace publishing checklist:
 6. Keep the README's unofficial status and trademark notice visible on the Marketplace page.
 7. Run `npm run verify`.
 8. Run `npm run package:vsix`.
-9. Install the VSIX locally with `code --install-extension out/generate-commit-by-awadree-0.1.8.vsix --force`.
+9. Install the VSIX locally with `code --install-extension out/generate-commit-by-awadree-0.1.9.vsix --force`.
 10. Confirm the command palette and Source Control action work in an Extension Host or normal VS Code window.
 11. Configure Marketplace publishing credentials:
 
@@ -350,11 +366,13 @@ Run this after `npm install` and `npm run compile`.
 
 `Codex CLI was not found`
 
-Install Codex CLI or set `codexCommit.codexCommand` to the executable available from VS Code.
+Run `Generate Commit by Awadree: Install Codex CLI`, or install Codex manually with one of the commands near the top of this README. If Codex is installed somewhere custom, set `codexCommit.codexCommand` to the executable available from VS Code.
 
 `Codex is not authenticated` or `Not logged in`
 
 Run `Generate Commit by Awadree: Sign In`, complete browser login, then retry generation.
+
+If generation still reports authentication errors after signing in, run `Generate Commit by Awadree: Reauthenticate`. The extension checks auth from the same repository context used for generation, so repo-specific Codex configuration can affect the result.
 
 `No Git repository found`
 

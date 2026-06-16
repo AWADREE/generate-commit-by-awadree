@@ -30,8 +30,8 @@ export async function checkCodexAvailable(run: RunProcess, codexCommand: string)
   }
 }
 
-export async function checkCodexAuthenticated(run: RunProcess, codexCommand: string): Promise<void> {
-  const result = await run(codexCommand, ['login', 'status'], { timeoutMs: 15000 });
+export async function checkCodexAuthenticated(run: RunProcess, codexCommand: string, cwd?: string): Promise<void> {
+  const result = await run(codexCommand, ['login', 'status'], { cwd, timeoutMs: 15000 });
   if (result.code !== 0) {
     const detail = (result.stderr || result.stdout).trim();
     throw new Error(detail || 'Codex is not authenticated. Run "Generate Commit by Awadree: Sign In".');

@@ -22,13 +22,14 @@ describe('Codex CLI checks', () => {
     await expect(checkCodexAvailable(run, 'codex')).rejects.toThrow('Codex CLI was not found');
   });
 
-  it('accepts authenticated Codex login status', async () => {
-    const run: RunProcess = async (_command, args) => {
+  it('accepts authenticated Codex login status in the repo context', async () => {
+    const run: RunProcess = async (_command, args, options) => {
       expect(args).toEqual(['login', 'status']);
+      expect(options?.cwd).toBe('/repo');
       return result('Logged in\n');
     };
 
-    await expect(checkCodexAuthenticated(run, 'codex')).resolves.toBeUndefined();
+    await expect(checkCodexAuthenticated(run, 'codex', '/repo')).resolves.toBeUndefined();
   });
 
   it('reports unauthenticated status with sign-in guidance', async () => {

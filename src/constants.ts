@@ -1,5 +1,6 @@
 export const COMMANDS = {
   generate: 'codexCommit.generateCommitMessage',
+  installCodexCli: 'codexCommit.installCodexCli',
   selectModel: 'codexCommit.selectModel',
   selectReasoningEffort: 'codexCommit.selectReasoningEffort',
   signIn: 'codexCommit.signIn',

@@ -7,6 +7,7 @@ const vscode = require('vscode');
 const extensionId = 'Awadree.generate-commit-by-awadree';
 const commandIds = [
   'codexCommit.generateCommitMessage',
+  'codexCommit.installCodexCli',
   'codexCommit.selectModel',
   'codexCommit.selectReasoningEffort',
   'codexCommit.signIn',

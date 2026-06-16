@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.9
+
+- Add an explicit Codex CLI install command that runs the official installer in a user-confirmed terminal session.
+- Document Codex CLI install commands and clarify that the extension requires Codex CLI.
+- Check Codex authentication from the same repository context used for commit generation.
+- Improve missing CLI and authentication error actions with install, sign-in, and reauthenticate options.
+
 ## 0.1.8
 
 - Match GitLens-style commit message bodies with scoped subjects and detailed, capitalized, past-tense bullet points for non-trivial diffs.

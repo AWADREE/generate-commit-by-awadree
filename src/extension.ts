@@ -122,6 +122,41 @@ function showCodexTerminal(commands: string | readonly string[], name = 'Codex C
   }
 }
 
+function getCodexCliInstallCommands(): string[] {
+  if (process.platform === 'win32') {
+    return [
+      'powershell -ExecutionPolicy ByPass -c "irm https://chatgpt.com/codex/install.ps1 | iex"',
+      'codex login'
+    ];
+  }
+
+  if (process.platform === 'darwin' || process.platform === 'linux') {
+    return [
+      'curl -fsSL https://chatgpt.com/codex/install.sh | sh',
+      'codex login'
+    ];
+  }
+
+  return [
+    'npm install -g @openai/codex',
+    'codex login'
+  ];
+}
+
+async function installCodexCli(): Promise<void> {
+  const confirmed = await vscode.window.showWarningMessage(
+    'This will run the official Codex CLI installer in a VS Code terminal, then start Codex sign-in. Continue?',
+    { modal: true },
+    'Install Codex CLI'
+  );
+
+  if (confirmed !== 'Install Codex CLI') {
+    return;
+  }
+
+  showCodexTerminal(getCodexCliInstallCommands(), 'Install Codex CLI');
+}
+
 async function signIn(): Promise<void> {
   const { codexCommand } = getConfig();
   const signal = hasOfficialCodexExtensionSignal()
@@ -129,6 +164,66 @@ async function signIn(): Promise<void> {
     : '';
   vscode.window.showInformationMessage(`Starting browser-based Codex CLI sign-in.${signal}`);
   showCodexTerminal(`${codexCommand} login`);
+}
+
+async function openCodexCommandSetting(): Promise<void> {
+  await vscode.commands.executeCommand('workbench.action.openSettings', `${CONFIG_SECTION}.codexCommand`);
+}
+
+function isMissingCodexCliError(detail: string): boolean {
+  return /Codex CLI was not found/iu.test(detail);
+}
+
+function isCodexAuthError(detail: string): boolean {
+  return /\b(not logged in|unauthenticated|not authenticated|login required|sign in)\b/iu.test(detail);
+}
+
+async function handleCodexReadinessError(error: unknown): Promise<void> {
+  const detail = error instanceof Error ? error.message : String(error);
+
+  if (isMissingCodexCliError(detail)) {
+    const action = await vscode.window.showErrorMessage(
+      `${detail} This extension requires the local Codex CLI.`,
+      'Install Codex CLI',
+      'Open Setting'
+    );
+    if (action === 'Install Codex CLI') {
+      await installCodexCli();
+    } else if (action === 'Open Setting') {
+      await openCodexCommandSetting();
+    }
+    return;
+  }
+
+  const action = await vscode.window.showErrorMessage(
+    detail,
+    'Sign In',
+    'Reauthenticate'
+  );
+  if (action === 'Sign In') {
+    await signIn();
+  } else if (action === 'Reauthenticate') {
+    await reauthenticate();
+  }
+}
+
+async function handleCodexGenerationError(error: unknown): Promise<void> {
+  const detail = error instanceof Error ? error.message : String(error);
+  if (!isCodexAuthError(detail)) {
+    vscode.window.showErrorMessage(`Codex commit message generation failed: ${detail}`);
+    return;
+  }
+
+  const action = await vscode.window.showErrorMessage(
+    `Codex commit message generation failed: ${detail}`,
+    'Sign In',
+    'Reauthenticate'
+  );
+  if (action === 'Sign In') {
+    await signIn();
+  } else if (action === 'Reauthenticate') {
+    await reauthenticate();
+  }
 }
 
 async function signOut(): Promise<void> {
@@ -254,14 +349,9 @@ async function generate(): Promise<void> {
       progress.report({ message: 'Checking Codex CLI and sign-in...' });
       try {
         await checkCodexAvailable(runProcess, config.codexCommand);
-        await checkCodexAuthenticated(runProcess, config.codexCommand);
+        await checkCodexAuthenticated(runProcess, config.codexCommand, workspace.repoRoot);
       } catch (error) {
-        const detail = error instanceof Error ? error.message : String(error);
-        void vscode.window.showErrorMessage(detail, 'Sign In').then(async action => {
-          if (action === 'Sign In') {
-            await signIn();
-          }
-        });
+        await handleCodexReadinessError(error);
         return;
       }
 
@@ -298,8 +388,7 @@ async function generate(): Promise<void> {
           vscode.window.showInformationMessage('Codex generated a commit message.');
         }
       } catch (error) {
-        const detail = error instanceof Error ? error.message : String(error);
-        vscode.window.showErrorMessage(`Codex commit message generation failed: ${detail}`);
+        await handleCodexGenerationError(error);
       }
     }
   );
@@ -310,6 +399,7 @@ export function activate(context: vscode.ExtensionContext): void {
 
   context.subscriptions.push(
     vscode.commands.registerCommand(COMMANDS.generate, generate),
+    vscode.commands.registerCommand(COMMANDS.installCodexCli, installCodexCli),
     vscode.commands.registerCommand(COMMANDS.selectModel, selectModel),
     vscode.commands.registerCommand(COMMANDS.selectReasoningEffort, selectReasoningEffort),
     vscode.commands.registerCommand(COMMANDS.signIn, signIn),

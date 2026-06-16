@@ -2,7 +2,7 @@
   "name": "generate-commit-by-awadree",
   "displayName": "Generate Commit by Awadree (Unofficial)",
   "description": "Unofficial extension that generates a Git commit message from local changes using the Codex CLI.",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "publisher": "Awadree",
   "license": "MIT",
   "icon": "assets/extension-icon.png",
@@ -38,6 +38,7 @@
   },
   "activationEvents": [
     "onCommand:codexCommit.generateCommitMessage",
+    "onCommand:codexCommit.installCodexCli",
     "onCommand:codexCommit.selectModel",
     "onCommand:codexCommit.selectReasoningEffort",
     "onCommand:codexCommit.signIn",
@@ -55,6 +56,11 @@
           "light": "assets/commit-spark-light.svg",
           "dark": "assets/commit-spark-dark.svg"
         }
+      },
+      {
+        "command": "codexCommit.installCodexCli",
+        "title": "Generate Commit by Awadree: Install Codex CLI",
+        "category": "Generate Commit by Awadree"
       },
       {
         "command": "codexCommit.selectModel",
@@ -93,6 +99,9 @@
       "commandPalette": [
         {
           "command": "codexCommit.generateCommitMessage"
+        },
+        {
+          "command": "codexCommit.installCodexCli"
         },
         {
           "command": "codexCommit.selectModel"
@@ -179,10 +188,10 @@
     "test:extension": "node ./test/run-extension-host.js",
     "verify": "npm run compile && npm run test:unit && npm run test:extension",
     "vscode:prepublish": "npm run compile",
-    "package:vsix": "node -e \"require('fs').mkdirSync('out',{recursive:true})\" && vsce package --baseContentUrl https://github.com/Awadree/generate-commit-by-awadree/blob/main/ --baseImagesUrl https://raw.githubusercontent.com/Awadree/generate-commit-by-awadree/main/ --out out/generate-commit-by-awadree-0.1.8.vsix",
-    "install:vsix": "npm run package:vsix && code --install-extension out/generate-commit-by-awadree-0.1.8.vsix --force",
-    "publish:dry-run": "node -e \"require('fs').mkdirSync('out',{recursive:true})\" && vsce package --baseContentUrl https://github.com/Awadree/generate-commit-by-awadree/blob/main/ --baseImagesUrl https://raw.githubusercontent.com/Awadree/generate-commit-by-awadree/main/ --out out/generate-commit-by-awadree-0.1.8.vsix",
-    "publish:marketplace": "vsce publish --packagePath out/generate-commit-by-awadree-0.1.8.vsix --skip-duplicate"
+    "package:vsix": "node -e \"require('fs').mkdirSync('out',{recursive:true})\" && vsce package --baseContentUrl https://github.com/Awadree/generate-commit-by-awadree/blob/main/ --baseImagesUrl https://raw.githubusercontent.com/Awadree/generate-commit-by-awadree/main/ --out out/generate-commit-by-awadree-0.1.9.vsix",
+    "install:vsix": "npm run package:vsix && code --install-extension out/generate-commit-by-awadree-0.1.9.vsix --force",
+    "publish:dry-run": "node -e \"require('fs').mkdirSync('out',{recursive:true})\" && vsce package --baseContentUrl https://github.com/Awadree/generate-commit-by-awadree/blob/main/ --baseImagesUrl https://raw.githubusercontent.com/Awadree/generate-commit-by-awadree/main/ --out out/generate-commit-by-awadree-0.1.9.vsix",
+    "publish:marketplace": "vsce publish --packagePath out/generate-commit-by-awadree-0.1.9.vsix --skip-duplicate"
   },
   "devDependencies": {
     "@types/node": "^20.14.10",
